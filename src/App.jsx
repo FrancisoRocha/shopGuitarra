@@ -1,5 +1,5 @@
+import Guitarra from "./components/guitarra"
 import Header from "./components/Header"
-import Guitarra from "./components/Guitarra"
 
 
 function App() {
