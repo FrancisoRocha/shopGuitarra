@@ -1,86 +1,11 @@
-import { useState, useEffect } from "react"
 import Guitarra from "./components/guitarra"
 import Header from "./components/Header"
-import { db } from "./data/db"
+import { useCart } from "./hooks/useCart"
 
 function App() {
 
-    const initialCart = () => {
-        const localStorageCart = localStorage.getItem('cart')
-        return localStorageCart ? JSON.parse(localStorageCart) : [];
-    }
-
-    //UseSatate
-    const [data] = useState(db);
-    const [cart, setCart] = useState(initialCart);
-
-    const MAX_ITEMS = 5;
-    const MIN_ITEMS = 1;
-
-    useEffect(() => {
-        localStorage.setItem('cart', JSON.stringify(cart))
-    }, [cart])
-
-    //Agregar un item al carrito
-    function addToCart(item){
-
-        const itemExist = cart.findIndex((guitar) => guitar.id === item.id)
-
-        if(itemExist >= 0){
-            if (cart[itemExist].quantity >= MAX_ITEMS) return;
-            const updatedCart = [...cart];
-            updatedCart[itemExist].quantity++;
-            setCart(updatedCart);
-        }else{
-            // Agrega al carrito
-            item.quantity = 1;
-            setCart([...cart, item])
-        }
-    }
-
-    //Eliminar un item del carrito
-    function removeToCart(id){
-        setCart(prevCart => prevCart.filter(guitar => guitar.id !== id))
-    }
-
-    //Incrementar la cantidad del item
-    function incrementQuantity(id){
-        const updatedCart = cart.map(item => {
-            if(item.id === id && item.quantity < MAX_ITEMS){
-                return {
-                    ...item,
-                    quantity: item.quantity + 1
-                }
-            }
-            return item
-        })
-        setCart(updatedCart);
-    }
-
-
-    //Decrementar la cantidad del item
-    function decrementQuantity(id){
-        const decrementCart = cart.map(item =>{
-            if(item.id === id && item.quantity > MIN_ITEMS){
-                return {
-                    ...item,
-                    quantity: item.quantity - 1
-                }
-            }
-            return item;
-        })
-        setCart(decrementCart);
-    }
-
-    //Vaciar el carrit
-    function clearCart(){
-        setCart([]);
-    }
-
-    //localStorage
-    // function saveLocalStorage(){
-    //     localStorage.setItem('cart', JSON.stringify(cart))
-    // }
+    const {  data, cart, addToCart, removeToCart, incrementQuantity, decrementQuantity, clearCart,
+            isEmpty,  carTotal} = useCart();
 
   return (
     <>
@@ -92,7 +17,10 @@ function App() {
             incrementQuantity={incrementQuantity}
             decrementQuantity={decrementQuantity}
             clearCart={clearCart}
+            isEmpty={isEmpty}
+            carTotal={carTotal}
         />
+
         <main className="container-xl mt-5">
             <h2 className="text-center">Nuestra Colección</h2>
 
@@ -102,7 +30,6 @@ function App() {
                     //Props de guitarra
                       key={guitar.id}
                       guitar={guitar}
-                      setCart={setCart}
                       addToCart={addToCart}
                     />
                   ))}
