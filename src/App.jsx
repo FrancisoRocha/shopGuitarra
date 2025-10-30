@@ -36,7 +36,6 @@ function App() {
             item.quantity = 1;
             setCart([...cart, item])
         }
-        saveLocalStorage();
     }
 
     //Eliminar un item del carrito
