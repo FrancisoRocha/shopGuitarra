@@ -1,16 +1,25 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Guitarra from "./components/guitarra"
 import Header from "./components/Header"
 import { db } from "./data/db"
 
 function App() {
 
+    const initialCart = () => {
+        const localStorageCart = localStorage.getItem('cart')
+        return localStorageCart ? JSON.parse(localStorageCart) : [];
+    }
+
     //UseSatate
-    const [data, setData] = useState(db);
-    const [cart, setCart] = useState([]);
+    const [data] = useState(db);
+    const [cart, setCart] = useState(initialCart);
 
     const MAX_ITEMS = 5;
     const MIN_ITEMS = 1;
+
+    useEffect(() => {
+        localStorage.setItem('cart', JSON.stringify(cart))
+    }, [cart])
 
     //Agregar un item al carrito
     function addToCart(item){
@@ -27,7 +36,7 @@ function App() {
             item.quantity = 1;
             setCart([...cart, item])
         }
-
+        saveLocalStorage();
     }
 
     //Eliminar un item del carrito
@@ -68,6 +77,11 @@ function App() {
     function clearCart(){
         setCart([]);
     }
+
+    //localStorage
+    // function saveLocalStorage(){
+    //     localStorage.setItem('cart', JSON.stringify(cart))
+    // }
 
   return (
     <>
